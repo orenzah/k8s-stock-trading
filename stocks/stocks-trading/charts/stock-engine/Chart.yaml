@@ -1,0 +1,5 @@
+apiVersion: v2
+name: stock-engine
+description: A Helm sub-chart for the stock engine component
+version: 0.1.1
+appVersion: 1.0.0

@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: influxdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: influxdb
+  template:
+    metadata:
+      labels:
+        app: influxdb
+    spec:
+      containers:
+      - name: influxdb
+        image: influxdb:2.7
+        ports:
+        - containerPort: 8086
+        env:
+        - name: INFLUXD_ENGINE_PATH
+          value: /data/influxdb        
+        - name: INFLUX_CONFIGS_PATH
+          value: /data/influxdb_config
+        - name: INFLUXD_BOLT_PATH
+          value: /data/influxdb_var/influxd.bolt
+        # - name: DOCKER_INFLUXDB_INIT_MODE
+        #   value: setup        
+        # - name: INFLUXDB_HTTP_AUTH_ENABLED
+        #   value: "true"
+        # - name: DOCKER_INFLUXDB_INIT_USERNAME
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: influxdb
+        #       key: username
+        # - name: DOCKER_INFLUXDB_INIT_PASSWORD
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: influxdb
+        #       key: password
+        # - name: DOCKER_INFLUXDB_INIT_ORG
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: influxdb
+        #       key: org             
+        # - name: DOCKER_INFLUXDB_INIT_BUCKET
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: influxdb
+        #       key: database
+        volumeMounts:
+        - name: influxdb-storage
+          mountPath: /data
+      volumes:
+      - name: influxdb-storage
+        hostPath:
+          path: /home/ubuntu/stock-venv/influxdb
+          type: Directory

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stock-engine      
+  labels:
+    app: stock-engine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stock-engine
+  template:
+    metadata:
+      annotations:
+        checksum/python-script: {{ .Files.Get "files/stock_engine.py" | sha256sum }}
+      labels:
+        app: stock-engine
+        stock: "1"
+        stock-engine: "1"
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+        - name: stock-engine
+          image: {{ .Values.stock_engine.image }}
+          command: ["python", "/app/stock_engine.py"]
+          env:
+            - name: INFLUX_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: influxdb
+                  key: host                  
+            - name: INFLUX_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: influxdb
+                  key: port
+            - name: INFLUX_USER
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb
+                  key: username
+            - name: INFLUX_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb
+                  key: password
+            - name: INFLUXDB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb
+                  key: token
+            - name: INFLUX_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: influxdb
+                  key: database
+            - name: INFLUX_ORG
+              valueFrom:
+                configMapKeyRef:
+                  name: influxdb
+                  key: org              

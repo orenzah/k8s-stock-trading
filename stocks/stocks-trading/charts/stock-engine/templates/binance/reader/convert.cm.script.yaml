@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.binance.convert.name  }}-script
+data:
+  {{ .Values.binance.convert.script  }}: |
+{{ .Files.Get .Values.binance.convert.script_path | indent 4 }}
+  assest.txt: |
+{{ .Files.Get .Values.binance.balance_asset_path | indent 4 }}

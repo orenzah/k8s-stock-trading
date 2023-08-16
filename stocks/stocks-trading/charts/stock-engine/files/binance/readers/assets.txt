@@ -1,0 +1,4 @@
+DOGE
+BUSD
+ETH
+BTC

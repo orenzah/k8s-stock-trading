@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.binance.spot.name  }}-script
+data:
+  {{ .Values.binance.spot.script  }}: |
+{{ .Files.Get .Values.binance.spot.script_path | indent 4 }}
+  assest.txt: |
+{{ .Files.Get .Values.binance.balance_asset_path | indent 4 }}

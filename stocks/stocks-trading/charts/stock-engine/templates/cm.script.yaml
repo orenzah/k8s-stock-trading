@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stock-engine-script
+data:
+  stock_engine.py: |
+{{ .Files.Get "files/stock_engine.py" | indent 4 }}

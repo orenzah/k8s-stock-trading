@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.binance.spot.name }}     
+  labels:
+    app: {{ .Values.binance.spot.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.binance.spot.name }}
+  template:
+    metadata:
+      annotations:
+        checksum/python-script: {{ .Files.Get .Values.binance.spot.script_path | sha256sum }}
+      labels:
+        app: {{ .Values.binance.spot.name }}        
+        category: {{ .Values.binance.spot.category }}        
+        {{ .Values.binance.spot.category }}: "1"
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+        - name: {{ .Values.binance.spot.name }}
+          image: {{ .Values.binance.spot.image }}
+          command: ["python", '/app/binance/readers/{{ .Values.binance.spot.script}}']
+          env:
+            - name: SLEEPING_TIME
+              value: "5"
+            - name: ASSETS_FILE
+              value: "/app/binance/readers/assets.txt"
+            - name: INFLUX_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: influxdb
+                  key: host                  
+            - name: INFLUX_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: influxdb
+                  key: port
+            - name: INFLUX_USER
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb
+                  key: username
+            - name: INFLUX_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb
+                  key: password
+            - name: INFLUXDB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb
+                  key: token
+            - name: INFLUX_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: influxdb
+                  key: database
+            - name: INFLUX_ORG
+              valueFrom:
+                configMapKeyRef:
+                  name: influxdb
+                  key: org
+            - name: BINANCE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.binance.spot.category }}
+                  key: api_key
+            - name: BINANCE_API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.binance.spot.category }}
+                  key: api_secret
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['app']                                    
+            - name: CATEGORY
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['category']                                       

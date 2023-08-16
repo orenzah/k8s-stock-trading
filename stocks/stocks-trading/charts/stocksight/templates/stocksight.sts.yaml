@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: stocksight
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stocksight
+  template:
+    metadata:
+      labels:
+        app: stocksight
+    spec:
+      containers:
+      - name: stocksight
+        image: cr.zahtlv.freeddns.org/stocksight
+        ports:
+        - containerPort: 5601
+        env:        
+        - name: ES_HOST
+          value: elasticsearch
+        volumeMounts:
+        - name: stocksight-config
+          mountPath: /app/config
+      volumes:
+      - name: stocksight-config
+        configMap:
+          name: stocksight-config
+        

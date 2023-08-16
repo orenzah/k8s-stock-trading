@@ -1,0 +1,6 @@
+/venv
+*.ignore
+!*.yaml
+!*.py
+!*.sh
+*.pyc

@@ -1,0 +1,17 @@
+image:
+  repository: grafana/grafana
+  tag: 10.0.3
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - name: InfluxDB
+      type: influxdb
+      access: proxy
+      url: http://influxdb:8086
+      database: stockdata
+      jsonData:
+        httpMode: GET
+      secureJsonData:
+        token: DBVpNbIMXfAUCU0UFhlWBAuQv7xuZEJu5LGck9IXpR-hfbNyWoef8juXVKSEzOZDUQWpY0vNbNsjwTdQ2AYOMg==

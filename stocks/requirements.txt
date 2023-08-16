@@ -1,0 +1,12 @@
+binance-connector==3.3.0
+influxdb==5.3.1
+influxdb-client==1.37.0
+numpy
+requests
+elasticsearch
+nltk
+tweepy
+beautifulsoup4
+textblob
+vaderSentiment
+newspaper3k

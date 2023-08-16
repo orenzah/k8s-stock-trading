@@ -1,0 +1,28 @@
+influxdb:
+  username: admin
+  password: password
+
+stock_engine:
+  image: cr.zahtlv.freeddns.org/python-app
+binance:
+  balance_script_path: files/binance/readers/balance.py
+  script: balance.py
+  name: balance
+  category: binance
+  api_key_path: "files/binance/api_key.ignore"
+  api_secret_path: "files/binance/api_secret.ignore"
+  balance_asset_path: files/binance/readers/assets.txt
+  image: cr.zahtlv.freeddns.org/python-app
+  spot:
+    script_path: files/binance/readers/spot.py
+    script: spot.py
+    name: spot
+    category: binance    
+    image: cr.zahtlv.freeddns.org/python-app
+  convert:
+    script_path: files/binance/convert.py
+    script: convert.py
+    name: convert
+    category: binance
+    interval: 1m
+    image: cr.zahtlv.freeddns.org/python-app

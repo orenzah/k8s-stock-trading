@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kibana
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+      - name: kibana
+        image: docker.elastic.co/kibana/kibana:8.9.0
+        ports:
+        - containerPort: 5601
+        env:
+        - name: SERVER_NAME
+          value: kibana.zahtlv.freeddns.org
+        - name: ELASTICSEARCH_HOSTS
+          value: '["https://elasticsearch:9200"]'
+        - name: ES_JAVA_OPTS
+          value: "-Xms512m -Xmx512m"        
+        volumeMounts:
+        - name: kibana-storage
+          mountPath: /usr/share/kibana/config
+      volumes:
+      - name: kibana-storage
+        hostPath:
+          path: /home/ubuntu/stock-venv/kibana
+          type: Directory

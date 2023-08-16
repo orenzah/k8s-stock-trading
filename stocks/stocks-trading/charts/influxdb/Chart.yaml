@@ -1,0 +1,7 @@
+apiVersion: v2
+name: influxdb
+description: A sub-chart for custom InfluxDB deployment
+type: application
+version: 0.1.0
+appVersion: 2.7
+dependencies: []

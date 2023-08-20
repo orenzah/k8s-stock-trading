@@ -2,7 +2,7 @@ import argparse
 import logging
 from ci.ci_class import CI
 from ci.exec import run
-
+from ci.path import 
 class Deployer(CI):
     def __init__(self):
         self.name = "deployer"
@@ -20,9 +20,13 @@ class Deployer(CI):
 
     def main(self):
         if self.args.deployer:
+            with open(f"{GRAFANA_ROOT}/influx_token.ignore", "r") as f:
+                grafana_token = f.read().strip()
+            # grafana_token
             values = {
                 "influxdb.username": "admin",
                 "influxdb.password": "password", # chagnge password after deployment
+                "grafana.datasources[0].secureJsonData.token": grafana_token
             }        
             cmd = ["helm", "upgrade", "--install", "--namespace", "stock", "stock-trading", "."]
             for v in values.keys():

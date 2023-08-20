@@ -29,6 +29,7 @@ spec:
           mountPath: /usr/share/kibana/config
       volumes:
       - name: kibana-storage
-        hostPath:
-          path: /home/ubuntu/stock-venv/kibana
-          type: Directory
+        nfs:
+          path: {{ .Values.global.common.path }}/kibana
+          server: {{ .Values.global.common.nfs_server }}
+

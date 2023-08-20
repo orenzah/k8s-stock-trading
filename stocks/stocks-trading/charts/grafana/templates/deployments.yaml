@@ -37,6 +37,6 @@ spec:
           mountPath: /var/lib/grafana
       volumes:
       - name: grafana-storage
-        hostPath:
-          path: /home/ubuntu/stock-venv/grafana
-          type: Directory
+        nfs:
+          path: {{ .Values.global.common.path }}/grafana
+          server: {{ .Values.global.common.nfs_server }}

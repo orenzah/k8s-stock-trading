@@ -29,6 +29,6 @@ spec:
           mountPath: /usr/share/elasticsearch/data
       volumes:
       - name: elasticsearch-storage
-        hostPath:
-          path: /home/ubuntu/stock-venv/elasticsearch
-          type: Directory
+        nfs:
+          path: {{ .Values.global.common.path }}/elasticsearch
+          server: {{ .Values.global.common.nfs_server }}

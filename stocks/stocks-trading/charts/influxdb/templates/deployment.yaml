@@ -52,7 +52,8 @@ spec:
         - name: influxdb-storage
           mountPath: /data
       volumes:
+      volumes:
       - name: influxdb-storage
-        hostPath:
-          path: /home/ubuntu/stock-venv/influxdb
-          type: Directory
+        nfs:
+          path: {{ .Values.global.common.path }}/influxdb
+          server: {{ .Values.global.common.nfs_server }}

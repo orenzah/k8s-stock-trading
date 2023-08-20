@@ -1,5 +1,6 @@
 /venv
 *.ignore
+*.ignore.*
 !*.yaml
 !*.py
 !*.sh

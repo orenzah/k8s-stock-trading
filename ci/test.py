@@ -25,8 +25,7 @@ class Test(CI):
         self.argparser = argparser
     
 
-    def main(self):
-        print(self.args)
+    def main(self):        
         if self.args.test_gdelt:            
             run(["python3", "./gdelt/run.py"], cwd="./")
         if self.args.test_path:

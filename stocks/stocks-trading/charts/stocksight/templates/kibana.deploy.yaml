@@ -21,7 +21,7 @@ spec:
         - name: SERVER_NAME
           value: kibana.zahtlv.freeddns.org
         - name: ELASTICSEARCH_HOSTS
-          value: '["https://elasticsearch:9200"]'
+          value: '["http://elasticsearch:9200"]'
         - name: ES_JAVA_OPTS
           value: "-Xms512m -Xmx512m"        
         volumeMounts:

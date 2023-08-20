@@ -1,6 +1,0 @@
-grafana:
-  influxdb:
-    token: DBVpNbIMXfAUCU0UFhlWBAuQv7xuZEJu5LGck9IXpR-hfbNyWoef8juXVKSEzOZDUQWpY0vNbNsjwTdQ2AYOMg==
-nfs:
-  server: 192.168.1.254
-  path: /root/nfs0

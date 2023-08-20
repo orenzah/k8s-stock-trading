@@ -15,7 +15,7 @@ class Builder(CI):
     def set_args(self, args):
         self.args = args
 
-    def add_args(self, argparser: argparse.ArgumentParser):
+    def add_args(self, argparser: argparse.ArgumentParser):        
         argparser.add_argument("--base", help="Build base images", action="store_true")
         argparser.add_argument("--builder", help="Build images", action="store_true")
         argparser.add_argument("--build_stocksight", help="Build stocksight image", action="store_true")

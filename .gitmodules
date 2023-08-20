@@ -1,0 +1,3 @@
+[submodule "stocksight"]
+	path = stocksight
+	url = https://github.com/orenzah/stocksight

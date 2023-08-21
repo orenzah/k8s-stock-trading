@@ -8,6 +8,6 @@ spec:
   type: NodePort
   ports:
     - protocol: TCP
-      port: 3036
-      targetPort: 3036
+      port: 3306
+      targetPort: 3306
       nodePort: 30336

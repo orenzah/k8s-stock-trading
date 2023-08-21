@@ -33,6 +33,7 @@ class Deployer(CI):
                 "grafana.datasources[0].secureJsonData.token": CONFIG["grafana"]["influxdb"]["token"],                
                 "global.common.path": CONFIG["nfs"]["path"],
                 "global.common.nfs_server": CONFIG["nfs"]["server"],
+                "global.common.mysql.db_name": CONFIG["mysql"]["db_name"],
                 
             }        
             cmd = ["helm", "upgrade", "--install", "--namespace", "stock", "stock-trading", "."]

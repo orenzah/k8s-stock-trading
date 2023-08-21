@@ -27,9 +27,11 @@ class Test(CI):
 
     def main(self):        
         if self.args.test_gdelt:            
-            run(["python3", "./gdelt/run.py"], cwd="./")
+            run(["python3", "./gdelt/download_realtime.py"], cwd="./")
         if self.args.test_path:
             run(["python3", "./ci/path.py"], cwd="./")
+        if self.args.test_stocksight:
+            run(["python3", "./stocksight/run.py"], cwd="./")
         
             
             

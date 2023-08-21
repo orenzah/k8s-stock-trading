@@ -5,8 +5,9 @@ metadata:
 spec:
   selector:
     app: couchbase
+  type: NodePort
   ports:
     - protocol: TCP
-      port: 8089
-      targetPort: 8089
-  type: ClusterIP
+      port: 8091
+      targetPort: 8091
+      nodePort: 30891

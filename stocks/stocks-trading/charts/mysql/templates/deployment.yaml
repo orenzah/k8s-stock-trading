@@ -19,7 +19,7 @@ spec:
         - containerPort: 3306
         env:
         - name: MYSQL_DATABASE
-          value: {{ .Values.global.common.db_name }}
+          value: {{ .Values.global.common.mysql.db_name }}
         - name: MYSQL_USER
           valueFrom:
             secretKeyRef:

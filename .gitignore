@@ -1,7 +1,8 @@
 /venv
 *.ignore
-*.ignore.*
+config.ignore.yaml
 !*.yaml
 !*.py
 !*.sh
 *.pyc
+config.ignore.yaml

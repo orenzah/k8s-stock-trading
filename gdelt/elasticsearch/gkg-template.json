@@ -1,0 +1,20 @@
+{
+    "template": "gdelt-gkg",
+    "index_patterns": ["gdelt-gkg-*"],
+    "mappings": {
+    
+        "properties": {
+          "@timestamp": {
+            "type": "date",
+            "format": "date_optional_time"
+          },
+          "Counts21Objects.location": {
+            "type": "geo_point"
+          },
+          "EnhancedLocationsObjects.location": {
+            "type": "geo_point"
+          }
+        }
+      }
+    
+  }

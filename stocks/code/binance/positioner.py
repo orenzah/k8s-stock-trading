@@ -83,9 +83,9 @@ while True:
 
 
     if len(active_positions) < 1:
-        logger.info('Max positions reached')
-        time.sleep(10)
-        continue
+        # check if there is a buy signal
+        # get the list of symbols
+        
 
     time.sleep(10)
 

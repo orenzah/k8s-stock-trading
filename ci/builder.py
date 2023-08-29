@@ -34,9 +34,7 @@ class Builder(CI):
     def main(self):    
         if self.args.base:       
             self.docker_builder("base", "python-base", "latest", "./stocks")
-        elif self.args.builder:        
-            self.docker_builder("app", "python-app", "latest", "./stocks")        
-        elif self.args.build_stocksight:        
-            self.docker_builder("stocksight", "stocksight", "latest", "./stocksight")
+        if self.args.builder:        
+            self.docker_builder("app", "python-app", "latest", "./stocks")
         
     

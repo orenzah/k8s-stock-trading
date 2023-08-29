@@ -6,3 +6,4 @@ RUN pip install --upgrade pip && pip install -r /app/requirements.txt && \
 
 FROM base as app
 ADD ./code /app
+WORKDIR /app

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: phpmyadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phpmyadmin
+  template:
+    metadata:
+      labels:
+        app: phpmyadmin
+    spec:
+      containers:
+      - name: phpmyadmin
+        image: phpmyadmin        
+        ports:
+        - containerPort: 80
+        env:
+        - name: PMA_HOST
+          value: mysql
+        - name: PMA_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql
+              key: username    
+        - name: PMA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql
+              key: password                  
+        # volumeMounts:
+        # - name: mysql-storage
+        #   mountPath: /var/lib/mysql
+        # - name: mysql-config
+        #   mountPath: /etc/my.cnf
+        #   subPath: my.cnf
+      # volumes:
+      # - name: mysql-storage
+      #   nfs:
+      #     path: {{ .Values.global.common.path }}/mysql
+      #     server: {{ .Values.global.common.nfs_server }}
+      # - name: mysql-config
+      #   configMap:
+      #     name: mysql-config

@@ -17,8 +17,7 @@ class Test(CI):
         
     def add_args(self, argparser: argparse.ArgumentParser):
         test_group = argparser.add_argument_group("Run tests")        
-        test_group.add_argument("--test-formatting", help="Run Formatting", action="store_true")
-        test_group.add_argument("--test-stocksight", help="Test the stocksight code", action="store_true")        
+        test_group.add_argument("--test-formatting", help="Run Formatting", action="store_true")          
         test_group.add_argument("--test-gdelt", help="Test gdelt code", action="store_true")
         test_group.add_argument("--test-path", help="Test Path", action="store_true")
         
@@ -29,9 +28,7 @@ class Test(CI):
         if self.args.test_gdelt:            
             run(["python3", "./gdelt/download_realtime.py"], cwd="./")
         if self.args.test_path:
-            run(["python3", "./ci/path.py"], cwd="./")
-        if self.args.test_stocksight:
-            run(["python3", "./stocksight/run.py"], cwd="./")
+            run(["python3", "./ci/path.py"], cwd="./")        
         
             
             

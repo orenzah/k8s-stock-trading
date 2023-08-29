@@ -11,7 +11,3 @@ dependencies:
   - name: stock-engine
     version: 0.1.0
     repository: file://charts/stock-engine
-  - name: stocksight
-    version: 0.1.0
-    repository: file://charts/stocksight
-  

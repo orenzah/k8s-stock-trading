@@ -6,7 +6,10 @@ from ci.exec import run
 from ci.path import GRAFANA_ROOT, CI_ROOT
 
 from ci.config import CONFIG
-from ci.logger import logger
+import logging
+import logging.config
+from ci.logger import LOGGING_CONFIG
+
 class Deployer(CI):
     def __init__(self):
         self.name = "deployer"
@@ -16,6 +19,8 @@ class Deployer(CI):
         self.context = None
         self.namespace = None
         self.get_context()
+        self.logger = logging.getLogger(__name__)
+        logging.config.dictConfig(LOGGING_CONFIG)
 
     def set_args(self, args):
         self.args = args

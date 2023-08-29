@@ -17,8 +17,7 @@ class Builder(CI):
 
     def add_args(self, argparser: argparse.ArgumentParser):        
         argparser.add_argument("--base", help="Build base images", action="store_true")
-        argparser.add_argument("--builder", help="Build images", action="store_true")
-        argparser.add_argument("--build_stocksight", help="Build stocksight image", action="store_true")
+        argparser.add_argument("--builder", help="Build images", action="store_true")        
         self.argparser = argparser        
 
     def docker_builder(self, target: str, image: str, tag: str, cwd: str):

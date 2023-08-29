@@ -1,20 +1,26 @@
 import logging
+import logging.config
 
-# create logger
-logger = logging.getLogger('simple_example')
-logger.setLevel(logging.DEBUG)
+LOGGING_CONFIG = {
+    "version": 1,
+    "root": {
+        "handlers": ["console"],
+        "level": "DEBUG"
+    },
+    "handlers": {
+        "console": {
+            "formatter": "std_out",
+            "class": "logging.StreamHandler",
+            "level": "DEBUG"
+        }
+    },
+    "formatters": {
+        "std_out": {
+            "format": '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+            "datefmt": "%d-%m-%Y %I:%M:%S"
+        }
+    },
+}
 
-# create console handler and set level to debug
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-
-# create formatter
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-# add formatter to ch
-ch.setFormatter(formatter)
-
-# add ch to logger
-logger.addHandler(ch)
-
-# logger.info('Started')
+mylogger = logging
+mylogger.config.dictConfig(LOGGING_CONFIG)

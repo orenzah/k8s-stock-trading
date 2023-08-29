@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: stocksight-config
-data:
-  config.py: |
-{{ .Files.Get "files/config.py" | indent 4 }}
-  twitteruserids.txt: |
-{{ .Files.Get "files/twitteruserids.txt" | indent 4 }}

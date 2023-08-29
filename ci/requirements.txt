@@ -1,2 +1,5 @@
 pep8
-yaml
+black
+flake8
+isort
+PyYAML

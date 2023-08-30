@@ -22,14 +22,14 @@ spec:
       containers:
         - name: {{ .Values.binance.convert.name }}
           image: {{ .Values.binance.convert.image }}
-          command: ["python", '/app/binance/{{ .Values.binance.convert.script}}']
+          command: ["python", '/app/mybinance/{{ .Values.binance.convert.script}}']
           env:
             - name: SLEEPING_TIME
               value: "60"
             - name: INTERVAL
               value: {{ .Values.binance.convert.interval }}              
             - name: ASSETS_FILE
-              value: "/app/binance/readers/assets.txt"
+              value: "/app/mybinance/readers/assets.txt"
             - name: INFLUX_HOST
               valueFrom:
                 configMapKeyRef:

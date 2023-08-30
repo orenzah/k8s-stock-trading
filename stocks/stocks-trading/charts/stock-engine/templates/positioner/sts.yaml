@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: positioner
+  labels:
+    app: positioner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: positioner
+  template:
+    metadata:
+      annotations:
+        helm.sh/deploy-date: {{ now | quote }}
+      labels:
+        app: positioner
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+        - name: positioner
+          image: {{ .Values.positioner.image }}
+          command:
+            {{- range .Values.positioner.command }}
+            - "{{ . }}"
+            {{- end }}
+          env:
+          - name: API_URL
+            value: {{ .Values.positioner.api_url }}
+          - name: BINANCE_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: binance
+                key: api_key
+          - name: BINANCE_API_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: binance
+                key: api_secret            
+          - name: INTERVAL
+            value: "10"
+                

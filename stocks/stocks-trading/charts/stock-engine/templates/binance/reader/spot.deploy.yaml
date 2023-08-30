@@ -22,12 +22,12 @@ spec:
       containers:
         - name: {{ .Values.binance.spot.name }}
           image: {{ .Values.binance.spot.image }}
-          command: ["python", '/app/binance/readers/{{ .Values.binance.spot.script}}']
+          command: ["python", '/app/mybinance/readers/{{ .Values.binance.spot.script}}']
           env:
             - name: SLEEPING_TIME
               value: "5"
             - name: ASSETS_FILE
-              value: "/app/binance/readers/assets.txt"
+              value: "/app/mybinance/readers/assets.txt"
             - name: INFLUX_HOST
               valueFrom:
                 configMapKeyRef:

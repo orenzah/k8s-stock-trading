@@ -8,7 +8,7 @@ from ci.ci_class import CI
 from ci.config import CONFIG
 from ci.exec import run
 from ci.logger import LOGGING_CONFIG
-from ci.path import CI_ROOT, GRAFANA_ROOT
+from ci.path import CI_ROOT, STOCKS_ROOT
 
 
 class Deployer(CI):
@@ -46,7 +46,6 @@ class Deployer(CI):
 
     def main(self):
         if self.args.deployer:
-
             # grafana_token
             values = {
                 "influxdb.username": "admin",
@@ -55,7 +54,8 @@ class Deployer(CI):
                 "global.common.path": CONFIG["nfs"]["path"],
                 "global.common.nfs_server": CONFIG["nfs"]["server"],
                 "global.common.mysql.db_name": CONFIG["mysql"]["db_name"],
-
+                "stock-engine.binance.api_key": CONFIG["binance"]["api_key"],
+                "stock-engine.binance.api_secret": CONFIG["binance"]["api_secret"]
             }
             cmd = ["upgrade", "--install"]
             cmd = self.helm_cmd(cmd, name="stock-trading", chart=".", values={})
@@ -64,4 +64,4 @@ class Deployer(CI):
                 cmd = self.helm_cmd(cmd, name="stock-trading", chart=".", values={})
             for v in values.keys():
                 cmd.append(f"--set {v}={values[v]}")
-            run(cmd, cwd="./stocks/stocks-trading")
+            run(cmd, cwd=f"{STOCKS_ROOT}/stocks-trading")

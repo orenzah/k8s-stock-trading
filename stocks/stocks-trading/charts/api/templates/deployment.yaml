@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.api.name }}     
+  name: {{ .Values.api.name }}       
   labels:
     app: {{ .Values.api.name }}
 spec:
@@ -11,6 +11,8 @@ spec:
       app: {{ .Values.api.name }}
   template:
     metadata:
+      annotations:
+        helm.sh/deploy-date: {{ now | quote }}
       labels:
         app: {{ .Values.api.name }}                    
     spec:

@@ -20,10 +20,8 @@ if __name__ == "__main__":
     builder.add_args(argparser)
     deployer.add_args(argparser)
     test.add_args(argparser)
-    cq.add_args(argparser)
 
-    # ci.builder.add_args(argparser)
-    # ci.deployer.add_args(argparser)
+    cq.add_args(argparser)
 
     # argparser.add_argument("--base", help="Build base images", action="store_true")
     # argparser.add_argument("--builder", help="Build images", action="store_true")

@@ -1,11 +1,11 @@
 import inspect
+import logging
 import os
 import sys
 import time
 
 import requests
 from binance.spot import Spot
-import logging
 
 # create logger
 currentdir = os.path.dirname(
@@ -28,8 +28,10 @@ API_URL = os.getenv('API_URL')
 def sell_symbol(shares, symbol):
     pass
 
+
 def buy_symbol(shares, symbol):
     pass
+
 
 def get_symbols():
     return ["BTCUSDT"]
@@ -41,11 +43,10 @@ def current_positions(client, active_positions):
         logger.info(f'Symbol: {position["symbol"]}')
         symbol = position['symbol']
         symbol = symbol.replace('_', '')
-        # Get kline for the symbol
-        klines = client.klines(symbol=symbol, interval="1m")
-        # Get the last kline
-        kline = klines[-1]
-        # Get the close price
+
+
+def current_positions():
+    for position in active_positions:
         close_price = float(kline[4])
         # Get the stop lose price
         stop_lose_price = position['stop_lose_price']
@@ -61,11 +62,11 @@ def current_positions(client, active_positions):
             #     time.sleep(10)
             #     continue
             # send request to the API to close the position
-            data = {                               
+            data = {
                 "exit_price": close_price,
                 "entry_price": position['entry_price'],
                 "shares": position['shares'],
-                "symbol": position['symbol'],                
+                "symbol": position['symbol'],
                 "position_id": position["id"]
             }
             logger.info(f'Closing position: {data}')
@@ -75,7 +76,7 @@ def current_positions(client, active_positions):
             if resp.status_code != 200:
                 logger.error(f'Error: {resp.status_code}')
                 time.sleep(10)
-                continue        
+                continue
         logger.info(f'Closed position: {position}')
         continue
 
@@ -106,8 +107,8 @@ while True:
     logger.info(f'Active positions: {active_positions}')
 
     # Get account balance and get kline for the symbol
-    account = client.account()    
-    balances = account['balances']    
+    account = client.account()
+    balances = account['balances']
     current_positions(client, active_positions)
 
     if len(active_positions) < 1:

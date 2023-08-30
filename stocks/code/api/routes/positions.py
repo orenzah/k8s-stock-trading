@@ -5,6 +5,13 @@ import mysql.connector
 from fastapi import APIRouter
 from pydantic import BaseModel
 
+<< << << < HEAD
+
+
+== == == =
+
+>>>>>> > 93f71ba2a1e250a223519e7299fef4dc615d5f4d
+
 
 class Position(BaseModel):
     id: int | None = None
@@ -18,6 +25,9 @@ class Position(BaseModel):
     stop_lose_price: float
 
 
+<< << << < HEAD
+
+
 class ClosePosition(BaseModel):
     position_id: int
     exit_price: float
@@ -26,6 +36,9 @@ class ClosePosition(BaseModel):
     symbol: str
 
 
+== == == =
+
+>>>>>> > 93f71ba2a1e250a223519e7299fef4dc615d5f4d
 logger = logging.getLogger("mysql.connector")
 logger.setLevel(logging.DEBUG)
 
@@ -37,6 +50,7 @@ logger.addHandler(stream_handler)
 
 file_handler = logging.FileHandler("cpy.log")
 file_handler.setFormatter(formatter)
+<< << << < HEAD
 logger.addHandler(file_handler)
 
 router = APIRouter()
@@ -49,6 +63,22 @@ def open_connection(database: str):
     return cnx
 
 
+== == == =
+logger.addHandler(file_handler)
+
+router = APIRouter()
+
+
+def open_connection(database: str):
+    cnx = mysql.connector.connect(user=os.environ['MYSQL_USER'], password=os.environ['MYSQL_PASSWORD'],
+                                    host=os.environ['MYSQL_HOST'],
+                                    database=database)
+    return cnx
+
+
+>>>>>> > 93f71ba2a1e250a223519e7299fef4dc615d5f4d
+
+
 def close_connection(cnx):
     cnx.close()
 
@@ -58,7 +88,13 @@ def get_positions(cnx):
     query = ("SELECT * FROM state")
     cursor.execute(query)
     positions = []
+
+
+<< << << < HEAD
     for (entry_datetime, entry_price, exit_price, shares, symbol, active, timeout_seconds, stop_lose_price, id) in cursor:
+== == == =
+    for (id, entry_datetime, entry_price, exit_price, shares, symbol, active, timeout_seconds, stop_lose_price) in cursor:
+>>>>>> > 93f71ba2a1e250a223519e7299fef4dc615d5f4d
         position = {
             "id": id,
             "entry_datetime": entry_datetime,
@@ -74,13 +110,20 @@ def get_positions(cnx):
     cursor.close()
     return positions
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 93f71ba2a1e250a223519e7299fef4dc615d5f4d
 def get_position_by_id(cnx, id):
     cursor = cnx.cursor()
     query = ("SELECT * FROM state WHERE id = %s")
     cursor.execute(query, (id,))
     position = {}
+<<<<<<< HEAD
     for (id, entry_datetime, entry_price, exit_price, shares, symbol, active, stop_lose_price, id) in cursor:
+=======
+    for (id, entry_datetime, entry_price, exit_price, shares, symbol, active, stop_lose_price) in cursor:
+>>>>>>> 93f71ba2a1e250a223519e7299fef4dc615d5f4d
         position = {
             "id": id,
             "entry_datetime": entry_datetime,
@@ -95,6 +138,7 @@ def get_position_by_id(cnx, id):
     cursor.close()
     return position
 
+<<<<<<< HEAD
 
 def insert_state(position):
     cnx = open_connection('positions')
@@ -103,6 +147,15 @@ def insert_state(position):
              "(entry_price, exit_price, shares, symbol, timeout_seconds, stop_lose_price)"
              "VALUES (%s, %s, %s, %s, %s)")
     data = (position.entry_price, position.exit_price, position.shares, position.symbol, position.timeout_seconds, position.stop_lose_price)
+=======
+def insert_state(position):    
+    cnx = open_connection('positions')
+    cursor = cnx.cursor()
+    query = ("INSERT INTO state "
+            "(entry_price, exit_price, shares, symbol, timeout_seconds, stop_lose_price)"
+            "VALUES (%s, %s, %s, %s, %s)")
+    data = ( position.entry_price, position.exit_price, position.shares, position.symbol, position.timeout_seconds ,position.stop_lose_price)
+>>>>>>> 93f71ba2a1e250a223519e7299fef4dc615d5f4d
     cursor.execute(query, data)
     lastrowid = cursor.lastrowid
     cnx.commit()
@@ -117,7 +170,6 @@ def wrapper_get_positions():
     close_connection(cnx)
     return positions
 
-
 def wrapper_get_positions_by_id(id):
     cnx = open_connection('positions')
     position = get_position_by_id(cnx, id)
@@ -125,7 +177,6 @@ def wrapper_get_positions_by_id(id):
     return position
 
 ### Routes ###
-
 
 @router.get("/List", tags=["positions"])
 async def list_positions():
@@ -186,7 +237,6 @@ async def update_position(position: Position):
     # Update a position
     logging.debug(position)
     return {"position": position}
-
 
 @router.delete("/Delete", tags=["positions"])
 async def delete_position(position: Position):

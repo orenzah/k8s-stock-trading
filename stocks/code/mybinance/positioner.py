@@ -45,7 +45,7 @@ def current_positions(client, active_positions):
         symbol = symbol.replace('_', '')
 
 
-def current_positions():
+def current_positions(client, active_positions):
     for position in active_positions:
         close_price = float(kline[4])
         # Get the stop lose price

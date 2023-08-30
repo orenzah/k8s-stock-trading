@@ -36,6 +36,18 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: {{ .Values.mysql.password_secret.name }}
-                key: {{ .Values.mysql.password_secret.password }} 
+                key: {{ .Values.mysql.password_secret.password }}
+          - name: BINANCE_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: binance
+                key: api_key
+          - name: BINANCE_API_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: binance
+                key: api_secret
+
+
           
                 

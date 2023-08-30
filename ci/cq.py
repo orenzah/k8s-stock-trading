@@ -35,7 +35,7 @@ class CQ(CI):
                 'origin/master']
 
             output = run(cmd, cwd="./")
-            files = output.output.decode("utf-8").split("\n")
+            files = output.output.split("\n")
             files = [f for f in files if f.endswith(".py")]
             exists_files = []
             for f in files:

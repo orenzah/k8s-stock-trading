@@ -14,9 +14,12 @@ currentdir = os.path.dirname(
             inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
-
-logging.basicConfig(level=logging.INFO)
+format = ('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format=format)
 logger = logging.getLogger("binance.positioner")
+
+# set format
+
 
 
 API_KEY = os.getenv('BINANCE_API_KEY')

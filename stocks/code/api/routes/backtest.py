@@ -56,11 +56,7 @@ def get_exchange(exchange: BTExchange):
     end = entry_time + datetime.timedelta(seconds=1)
     start = start.strftime('%Y-%m-%dT%H:%M:%SZ')
     end = end.strftime('%Y-%m-%dT%H:%M:%SZ')
-<<<<<<< HEAD
     query = f"""from(bucket: {influx_database})
-=======
-    query = f"""from(bucket: "stockdata")
->>>>>>> 595549b3e7e403e701af0cb1fcd71377c28938ec
     |> range(start: {start}, stop: {end})
     |> first()
     """

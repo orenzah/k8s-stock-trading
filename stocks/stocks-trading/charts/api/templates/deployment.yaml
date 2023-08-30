@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.api.name }}     
+  labels:
+    app: {{ .Values.api.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.api.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.api.name }}                    
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+        - name: {{ .Values.api.name }}
+          image: {{ .Values.api.image }}
+          command:
+            {{- range .Values.api.command }}
+            - "{{ . }}"
+            {{- end }}
+          env:
+          - name: MYSQL_HOST
+            value: {{ .Values.mysql.hostname }}
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.mysql.password_secret.name }}
+                key: {{ .Values.mysql.password_secret.username }}
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.mysql.password_secret.name }}
+                key: {{ .Values.mysql.password_secret.password }} 
+          
+                

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      annotations:
+        checksum/mysqlconfig: {{ .Files.Get "files/my.cnf" | sha256sum }}
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql
+        # command: ["--default-authentication-plugin=mysql_native_password"]
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_DATABASE
+          value: {{ .Values.global.common.mysql.db_name }}
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql
+              key: username    
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql
+              key: password                  
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+        - name: mysql-config
+          mountPath: /etc/my.cnf
+          subPath: my.cnf
+      volumes:
+      - name: mysql-storage
+        nfs:
+          path: {{ .Values.global.common.path }}/mysql
+          server: {{ .Values.global.common.nfs_server }}
+      - name: mysql-config
+        configMap:
+          name: mysql-config

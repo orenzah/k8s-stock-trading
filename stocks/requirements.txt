@@ -3,10 +3,7 @@ influxdb==5.3.1
 influxdb-client==1.37.0
 numpy
 requests
-elasticsearch
-nltk
-tweepy
-beautifulsoup4
-textblob
-vaderSentiment
-newspaper3k
+mysql-connector-python
+fastapi
+uvicorn
+pydantic

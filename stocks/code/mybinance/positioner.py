@@ -16,7 +16,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("binance.positioner")
 
 
 API_KEY = os.getenv('BINANCE_API_KEY')
@@ -117,15 +117,20 @@ while True:
         symbols = get_symbols()
         signals = []
         for symbol in symbols:
-            resp = requests.get(f'http://api:8000/Signals/ShouldEnterPosition/{symbol}')
+            data = {
+                "symbol": symbol                
+            }
+            resp = requests.post(f'http://api:8000/Signals/ShouldEnterPosition', json=data)
             if resp.status_code != 200:
                 logger.error(f'Error: {resp.status_code}')
                 time.sleep(10)
                 continue
             signal = resp.json()
+            if signal is None:
+                continue
             signals.append(signal)
-        if len(signals) < 1:
-            logger.info('No signals')
+        if len(signals) == 0:
+            logger.info('More than one signal')
             time.sleep(10)
             continue
         signals.sort(key=lambda x: x['confidence'])

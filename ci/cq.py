@@ -45,7 +45,7 @@ class CQ(CI):
             if exists_files:
                 run(["black", '--diff'] + exists_files, cwd="./", quiet=True, submodule_name="black")
                 run(['autopep8', '--in-place',
-                    '--aggressive', '--ignore=E501',
+                    '--aggressive',
                      '--max-line-length=120',
                      '--exclude=venv,__pycache__,.pytest,.git'] + exists_files,
                     cwd="./",

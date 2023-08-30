@@ -58,7 +58,8 @@ def get_positions(cnx):
     query = ("SELECT * FROM state")
     cursor.execute(query)
     positions = []
-    for (entry_datetime, entry_price, exit_price, shares, symbol, active, timeout_seconds, stop_lose_price, id) in cursor:
+    for (entry_datetime, entry_price, exit_price, shares, symbol,
+         active, timeout_seconds, stop_lose_price, id) in cursor:
         position = {
             "id": id,
             "entry_datetime": entry_datetime,
@@ -102,7 +103,13 @@ def insert_state(position):
     query = ("INSERT INTO state "
              "(entry_price, exit_price, shares, symbol, timeout_seconds, stop_lose_price)"
              "VALUES (%s, %s, %s, %s, %s)")
-    data = (position.entry_price, position.exit_price, position.shares, position.symbol, position.timeout_seconds, position.stop_lose_price)
+    data = (
+        position.entry_price,
+        position.exit_price,
+        position.shares,
+        position.symbol,
+        position.timeout_seconds,
+        position.stop_lose_price)
     cursor.execute(query, data)
     lastrowid = cursor.lastrowid
     cnx.commit()
@@ -172,7 +179,12 @@ async def close_position(close_position: ClosePosition):
     query = ("INSERT INTO history "
              "(entry_price, exit_price, shares, symbol, position_id)"
              "VALUES (%s, %s, %s, %s, %s)")
-    data = (close_position.entry_price, close_position.exit_price, close_position.shares, close_position.symbol, close_position.position_id)
+    data = (
+        close_position.entry_price,
+        close_position.exit_price,
+        close_position.shares,
+        close_position.symbol,
+        close_position.position_id)
     cursor.execute(query, data)
     cnx.commit()
     cursor.close()

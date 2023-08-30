@@ -135,7 +135,8 @@ while True:
                     my_balance = float(balance['free'])
                     break
             # sell signal
-            logger.info(f'Selling ETH with ETH balance with value of 10% of the balance {np.around(my_balance * 0.1, 3)}')
+            logger.info(
+                f'Selling ETH with ETH balance with value of 10% of the balance {np.around(my_balance * 0.1, 3)}')
 
             # buy BTC with ETH balance with value of 10% of the balance
             value = another_kline[1]['close']

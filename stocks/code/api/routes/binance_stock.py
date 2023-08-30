@@ -2,11 +2,10 @@
 import os
 
 import mysql.connector
-from fastapi import APIRouter
-from pydantic import BaseModel
-from fastapi.logger import logging
 from binance.spot import Spot
-
+from fastapi import APIRouter
+from fastapi.logger import logging
+from pydantic import BaseModel
 
 API_KEY = os.getenv('BINANCE_API_KEY')
 API_SECRET = os.getenv('BINANCE_API_SECRET')
@@ -14,13 +13,14 @@ API_SECRET = os.getenv('BINANCE_API_SECRET')
 router = APIRouter()
 client = Spot(api_key=API_KEY, api_secret=API_SECRET)
 
+
 class KlineQuery(BaseModel):
     symbol: str = "BTC_USDT"
     interval: str = "1m"
     limit: int = 1
-    
 
-# kline = client.klines(symbol='ETHBTC', interval=interval, limit=5)    
+
+# kline = client.klines(symbol='ETHBTC', interval=interval, limit=5)
 def unpack_kline(kline):
     return {
         "open_time": kline[0],
@@ -37,16 +37,15 @@ def unpack_kline(kline):
         "ignore": kline[11]
     }
 
+
 @router.post("/GetKline", tags=["stocks"])
 async def GetKline(query: KlineQuery):
-    symbol = query.symbol.replace('_', '')    
+    symbol = query.symbol.replace('_', '')
     interval = query.interval
     if interval not in ['1m', '3m', '5m', '15m', '30m']:
-        return None            
+        return None
     limit = query.limit
     klines = client.klines(symbol=symbol, interval=interval, limit=limit)
-    
+
     ret_val = [unpack_kline(kline) for kline in klines]
     return ret_val
-
-

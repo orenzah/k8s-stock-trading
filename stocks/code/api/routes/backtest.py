@@ -1,26 +1,20 @@
 
 # import logging
-import os
-
-import mysql.connector
-from fastapi import APIRouter
-from pydantic import BaseModel
-from fastapi.logger import logging
-from binance.spot import Spot
-
-router = APIRouter()
-
 import datetime
-import inspect
 import logging
 import os
-import sys
-import time
 
-import requests
 import influxdb_client
+import mysql.connector
+import requests
+from binance.spot import Spot
+from fastapi import APIRouter
+from fastapi.logger import logging
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
+from pydantic import BaseModel
+
+router = APIRouter()
 
 
 # Load InfluxDB connection parameters from environment variables
@@ -34,21 +28,23 @@ influx_client = InfluxDBClient(url=f"http://{influx_host}:{influx_port}", token=
 
 
 class BTPosition(BaseModel):
-    symbol: str = "BTCUSDT"    
+    symbol: str = "BTCUSDT"
     entry_time: datetime.datetime = datetime.datetime.now() - datetime.timedelta(hours=1)
     entry_price: float = 0.0
     exit_time: datetime.datetime = datetime.datetime.now()
     stop_loss_price: float = 0.0
     timeout_seconds: int = 0
-    exit_price: float = 0.0            
+    exit_price: float = 0.0
+
 
 class BTExchange(BaseModel):
     symbol: str = "BTCUSDT"
     entry_time: datetime.datetime = datetime.datetime.now() - datetime.timedelta(hours=1)
 
+
 @router.get("/Exchange", tags=["backtesting"])
 def get_exchange(exchange: BTExchange):
-    symbol = exchange.symbol.replace('_', '')    
+    symbol = exchange.symbol.replace('_', '')
     entry_time = exchange.entry_time
     # entry_time = entry_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 

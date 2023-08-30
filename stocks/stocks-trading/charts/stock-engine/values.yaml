@@ -26,3 +26,9 @@ binance:
     category: binance
     interval: 1m
     image: cr.zahtlv.freeddns.org/python-app
+positioner:
+  api_url: http://api:8000
+  image: cr.zahtlv.freeddns.org/python-app
+  command:
+    - python3
+    - /app/mybinance/positioner.py

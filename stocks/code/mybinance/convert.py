@@ -1,19 +1,14 @@
-from binance.spot import Spot
-import os
 import datetime
-
-import time
-
-
-import influxdb_client
-from influxdb_client import InfluxDBClient, Point, WritePrecision
-from influxdb_client.client.write_api import SYNCHRONOUS
-
-
-import numpy as np
-
 # create logger
 import logging
+import os
+import time
+
+import influxdb_client
+import numpy as np
+from binance.spot import Spot
+from influxdb_client import InfluxDBClient, Point, WritePrecision
+from influxdb_client.client.write_api import SYNCHRONOUS
 
 application_name = os.path.basename(__file__)
 application_name = application_name.replace('.py', '')
@@ -50,21 +45,12 @@ influx_database = os.getenv("INFLUX_DATABASE")
 influx_org = os.getenv("INFLUX_ORG")
 
 
-
-
 interval = os.getenv("INTERVAL")
 if not interval:
     interval = '1m'
 SLEEPING_TIME = int(os.getenv("SLEEPING_TIME"))
 if not SLEEPING_TIME:
     SLEEPING_TIME = 60
-
-
-
-
-
-
-
 
 
 client = Spot(api_key=API_KEY, api_secret=API_SECRET)
@@ -86,6 +72,8 @@ def unpack_kline(kline):
         'taker_buy_quote_asset_volume': float(kline[10]),
         'ignore': float(kline[11]),
     }
+
+
 def query_data(symbol, start_date, end_date, interval):
     query_api = influx_client.query_api()
     query = f'from(bucket:"{influx_database}")\
@@ -96,8 +84,6 @@ def query_data(symbol, start_date, end_date, interval):
         |> yield(name: "mean")'
     tables = query_api.query(query=query, org=influx_org)
     return tables
-    
-
 
 
 # condition_lt = diffs < 0
@@ -127,6 +113,7 @@ def class_kline(kline):
     else:
         return 'doji'
 
+
 possible_intervals = ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d']
 
 while True:
@@ -135,50 +122,46 @@ while True:
     account = client.account()
 
     kline = client.klines(symbol='ETHBTC', interval=interval, limit=5)
-    
+
     another_kline = client.klines(symbol='ETHBTC', interval='5m', limit=2)
     another_kline = [unpack_kline(k) for k in another_kline]
     if class_kline(another_kline[0]) == 'green' and class_kline(another_kline[1]) == 'doji':
         # buy ETH with BTC
-        if another_kline[1]['close'] >= 1.0/(15.3):
-            logger.info(f'Buying BTC with ETH')    
-            # get BTC balance and buy ETH    
+        if another_kline[1]['close'] >= 1.0 / (15.3):
+            logger.info(f'Buying BTC with ETH')
+            # get BTC balance and buy ETH
             for balance in account['balances']:
                 if balance['asset'] == 'ETH':
                     my_balance = float(balance['free'])
-                    break    
+                    break
             # sell signal
-            logger.info(f'Selling ETH with ETH balance with value of 10% of the balance {np.around(my_balance * 0.1, 3)}')
-            
+            logger.info(
+                f'Selling ETH with ETH balance with value of 10% of the balance {np.around(my_balance * 0.1, 3)}')
+
             # buy BTC with ETH balance with value of 10% of the balance
-            value = another_kline[1]['close']       
+            value = another_kline[1]['close']
             params = {
-                'symbol': 'ETHBTC',        
+                'symbol': 'ETHBTC',
                 'side': 'SELL',
-                'type': 'MARKET',        
+                'type': 'MARKET',
                 'quoteOrderQty': np.around(value * my_balance * 0.75, 3)
-            }    
+            }
             backoff = True
             logger.debug(params)
             order = client.new_order(**params)
             logger.debug(order)
-            
+
             SLEEPING_TIME = SLEEPING_TIME * 5
             jump_sleeping_time = 10
-            for t in range(int(SLEEPING_TIME/jump_sleeping_time)):
+            for t in range(int(SLEEPING_TIME / jump_sleeping_time)):
                 logger.info(f'Left time for {SLEEPING_TIME - t*jump_sleeping_time} seconds')
-                time.sleep(jump_sleeping_time)    
+                time.sleep(jump_sleeping_time)
             continue
-
-
-
-    
-
 
     condition_red = np.array([])
     condition_green = np.array([])
     for k in kline:
-        k = unpack_kline(k)        
+        k = unpack_kline(k)
         if class_kline(k) == 'green':
             condition_green = np.append(condition_green, True)
             condition_red = np.append(condition_red, False)
@@ -192,58 +175,49 @@ while True:
     logger.debug([class_kline(unpack_kline(k)) for k in kline])
     if condition_red.all():
         # buy signal
-        # get BTC balance and buy ETH    
+        # get BTC balance and buy ETH
         for balance in account['balances']:
             if balance['asset'] == 'BTC':
                 my_balance = float(balance['free'])
-                break    
+                break
         logger.debug(my_balance)
         logger.info(f'Buying ETH with BTC balance with value of 10% of the balance {np.around(my_balance * 0.1, 3)}')
         # buy ETH with BTC balance with value of 10% of the balance
         params = {
-            'symbol': 'ETHBTC',        
+            'symbol': 'ETHBTC',
             'side': 'BUY',
-            'type': 'MARKET',        
+            'type': 'MARKET',
             'quoteOrderQty': np.around(my_balance * 0.1, 3)
         }
-        backoff = True 
-        logger.debug(params)   
-        order = client.new_order(**params)
-        logger.debug(order)
-        
-    elif condition_green.all():
-        for balance in account['balances']:
-            if balance['asset'] == 'ETH':
-                my_balance = float(balance['free'])
-                break    
-        # sell signal
-        logger.info(f'Selling ETH with ETH balance with value of 10% of the balance {np.around(my_balance * 0.1, 3)}')
-        
-        # buy BTC with ETH balance with value of 10% of the balance
-        value = unpack_kline(kline[-1])['close']        
-        params = {
-            'symbol': 'ETHBTC',        
-            'side': 'SELL',
-            'type': 'MARKET',        
-            'quoteOrderQty': np.around(value * my_balance * 0.5, 3)
-        }    
         backoff = True
         logger.debug(params)
         order = client.new_order(**params)
         logger.debug(order)
-    
+
+    elif condition_green.all():
+        for balance in account['balances']:
+            if balance['asset'] == 'ETH':
+                my_balance = float(balance['free'])
+                break
+        # sell signal
+        logger.info(f'Selling ETH with ETH balance with value of 10% of the balance {np.around(my_balance * 0.1, 3)}')
+
+        # buy BTC with ETH balance with value of 10% of the balance
+        value = unpack_kline(kline[-1])['close']
+        params = {
+            'symbol': 'ETHBTC',
+            'side': 'SELL',
+            'type': 'MARKET',
+            'quoteOrderQty': np.around(value * my_balance * 0.5, 3)
+        }
+        backoff = True
+        logger.debug(params)
+        order = client.new_order(**params)
+        logger.debug(order)
+
     if backoff:
         SLEEPING_TIME = SLEEPING_TIME * 5
     jump_sleeping_time = 10
-    for t in range(int(SLEEPING_TIME/jump_sleeping_time)):
+    for t in range(int(SLEEPING_TIME / jump_sleeping_time)):
         logger.info(f'Left time for {SLEEPING_TIME - t*jump_sleeping_time} seconds')
-        time.sleep(jump_sleeping_time)    
-
-
-
-
-
-    
-
-
-
+        time.sleep(jump_sleeping_time)

@@ -1,12 +1,21 @@
-from fastapi import APIRouter
-import mysql.connector 
 import os
-import logging
-from pydantic import BaseModel
-from positions import Position
 
+import mysql.connector
+from fastapi import APIRouter
+from pydantic import BaseModel
 
 router = APIRouter()
+
+
+def open_connection(database: str):
+    cnx = mysql.connector.connect(user=os.environ['MYSQL_USER'], password=os.environ['MYSQL_PASSWORD'],
+                                  host=os.environ['MYSQL_HOST'],
+                                  database=database)
+    return cnx
+
+
+def close_connection(cnx):
+    cnx.close()
 
 
 def get_symbols():
@@ -24,6 +33,4 @@ def get_symbols():
 
 @router.get("/List", tags=["symbol"])
 async def list_supported_symbols():
-    return get_symbols()    
-
-
+    return get_symbols()

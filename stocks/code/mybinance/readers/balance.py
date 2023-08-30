@@ -1,13 +1,11 @@
-from binance.spot import Spot
-import os, time
-import datetime
+import logging
+import os
+import time
 
 import influxdb_client
+from binance.spot import Spot
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
-
-
-import logging
 
 # create logger
 application_name = os.path.basename(__file__)
@@ -61,26 +59,25 @@ binance_client = Spot(api_key=API_KEY, api_secret=API_SECRET)
 influx_client = InfluxDBClient(url=f"http://{influx_host}:{influx_port}", token=influx_token)
 
 
-
 exchange_list = ['ETCBTC', 'DOGEBTC', 'BTCBTC']
-                        
+
 while True:
     logger.info("Reading balance")
-    sum_balance = 0 # sum of all balances in BTC
+    sum_balance = 0  # sum of all balances in BTC
     account = binance_client.account()
     for balance in account['balances']:
-        if balance['asset'] in possible_assets:        
+        if balance['asset'] in possible_assets:
             logger.info(f"Asset: {balance['asset']}, Free: {balance['free']}, Locked: {balance['locked']}")
             match balance['asset']:
                 case 'DOGE':
-                    doge_balance = float(balance['free']) * float(client.ticker_price(symbol='DOGEBTC')['price'])                    
+                    doge_balance = float(balance['free']) * float(client.ticker_price(symbol='DOGEBTC')['price'])
                     sum_balance += doge_balance
                 case 'BTC':
                     btc_balance = float(balance['free'])
                     sum_balance += btc_balance
-                case 'ETH':                    
+                case 'ETH':
                     eth_balance = float(balance['free']) * float(client.ticker_price(symbol='ETHBTC')['price'])
-                    sum_balance += eth_balance                    
+                    sum_balance += eth_balance
             point = Point("balance").tag("asset", balance['asset']).field("balance", float(balance['free']))
             write_api = influx_client.write_api(write_options=SYNCHRONOUS)
             write_api.write(bucket=influx_database, org=influx_org, record=point)
@@ -98,11 +95,3 @@ while True:
     write_api.write(bucket=influx_database, org=influx_org, record=point)
     logger.info(f"Total Assets, Free: {sum_balance}")
     time.sleep(sleeping_time)
-
-    
-    
-
-
-
-
-

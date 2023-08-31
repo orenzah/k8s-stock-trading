@@ -2,9 +2,9 @@ import datetime
 import json
 
 import pandas as pd
+import requests
 from fastapi import APIRouter
 from pydantic import BaseModel
-import requests
 from requests.auth import HTTPBasicAuth
 
 router = APIRouter()
@@ -66,5 +66,5 @@ async def should_enter_position(query: QueryEnter):
             return False, None, None, None
     # TODO send request to the algo server to get the answer
     # answer is a boolean and timeout_seconds and stop_lose_price and exit_price\
-    # default return None    
+    # default return None
     return None

@@ -7,4 +7,5 @@ mysql-connector-python
 fastapi
 uvicorn
 pydantic
+pandas
 PyYAML

@@ -1,3 +1,4 @@
+import datetime
 import inspect
 import logging
 import os
@@ -19,7 +20,6 @@ logging.basicConfig(level=logging.INFO, format=format)
 logger = logging.getLogger("binance.positioner")
 
 # set format
-
 
 
 API_KEY = os.getenv('BINANCE_API_KEY')
@@ -49,7 +49,12 @@ def current_positions(client, active_positions):
 
 
 def current_positions(client, active_positions):
+
     for position in active_positions:
+        symbol = position['symbol'].replace('_', '')
+        klines = client.klines(symbol=symbol, interval="1m")
+        # Get the last kline
+        kline = klines[-1]
         close_price = float(kline[4])
         # Get the stop lose price
         stop_lose_price = position['stop_lose_price']
@@ -80,8 +85,27 @@ def current_positions(client, active_positions):
                 logger.error(f'Error: {resp.status_code}')
                 time.sleep(10)
                 continue
-        logger.info(f'Closed position: {position}')
-        continue
+            continue
+
+        logger.info(f'position entry_datetime {position["entry_datetime"]}')
+        entry_timestamp = datetime.datetime.strptime(position['entry_datetime'], '%Y-%m-%dT%H:%M:%S')
+        timeout_seconds = datetime.timedelta(seconds=position['timeout_seconds'])
+        if entry_timestamp + timeout_seconds <= datetime.datetime.now():
+            # expired
+            # check if the position is expired
+            # if expired, close the position
+            data = {
+                "exit_price": close_price,
+                "entry_price": position['entry_price'],
+                "shares": position['shares'],
+                "symbol": position['symbol'],
+                "position_id": position["id"]
+            }
+            logger.info(f'Closing position due to timeout: {data}')
+            # data = (close_position.entry_price, close_position.close_price, close_position.shares, close_position.symbol, close_position.id)
+            resp = requests.post(
+                f'http://api:8000/Positions/Close', json=data)
+            logger.info(f'Closed position: {position}')
 
 
 while True:
@@ -121,7 +145,7 @@ while True:
         signals = []
         for symbol in symbols:
             data = {
-                "symbol": symbol                
+                "symbol": symbol
             }
             resp = requests.post(f'http://api:8000/Signals/ShouldEnterPosition', json=data)
             if resp.status_code != 200:
@@ -133,7 +157,7 @@ while True:
                 continue
             signals.append(signal)
         if len(signals) == 0:
-            logger.info('More than one signal')
+            logger.info('No signals to enter a new position')
             time.sleep(10)
             continue
         signals.sort(key=lambda x: x['confidence'])

@@ -1,6 +1,6 @@
 # import logging
 import os
-
+import datetime
 import mysql.connector
 from binance.spot import Spot
 from fastapi import APIRouter
@@ -18,6 +18,15 @@ class KlineQuery(BaseModel):
     symbol: str = "BTC_USDT"
     interval: str = "1m"
     limit: int = 1
+
+
+class HistoricalKlineQuery(BaseModel):
+    symbol: str = "BTCUSDT"
+    interval: str = "1m"
+    start_time: int = 0
+    end_time: int = 0
+    limit: int = 1
+    kline_type: str = "spot"
 
 
 # kline = client.klines(symbol='ETHBTC', interval=interval, limit=5)
@@ -45,6 +54,28 @@ async def GetKline(query: KlineQuery):
     if interval not in ['1m', '3m', '5m', '15m', '30m']:
         return None
     limit = query.limit
+    klines = client.klines(symbol=symbol, interval=interval, limit=limit)
+
+    ret_val = [unpack_kline(kline) for kline in klines]
+    return ret_val
+
+@router.post("/GetHistoricalKline", tags=["stocks"])
+async def GetHistoricalKline(query: HistoricalKlineQuery):
+    symbol = query.symbol.replace('_', '')
+    interval = query.interval
+    if interval not in ['1m', '3m', '5m', '15m', '30m']:
+        return None
+    start_time = query.start_time
+    if start_time == 0:
+        start_time = datetime.datetime.now().timestamp() * 1000
+    end_time = query.end_time
+    if end_time == 0:
+        end_time = datetime.datetime.now().timestamp() * 1000
+    if start_time > end_time:
+        return None
+    limit = query.limit
+    # kline_type = query.kline_type
+    kline_type = "spot"
     klines = client.klines(symbol=symbol, interval=interval, limit=limit)
 
     ret_val = [unpack_kline(kline) for kline in klines]

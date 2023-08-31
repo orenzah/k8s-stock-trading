@@ -1,6 +1,7 @@
 # import logging
-import os
 import datetime
+import os
+
 import mysql.connector
 from binance.spot import Spot
 from fastapi import APIRouter
@@ -58,6 +59,7 @@ async def GetKline(query: KlineQuery):
 
     ret_val = [unpack_kline(kline) for kline in klines]
     return ret_val
+
 
 @router.post("/GetHistoricalKline", tags=["stocks"])
 async def GetHistoricalKline(query: HistoricalKlineQuery):

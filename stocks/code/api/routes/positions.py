@@ -3,8 +3,9 @@ import os
 
 import mysql.connector
 from fastapi import APIRouter
-from pydantic import BaseModel
 from fastapi.logger import logging
+from pydantic import BaseModel
+
 
 class Position(BaseModel):
     id: int | None = None

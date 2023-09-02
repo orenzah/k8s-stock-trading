@@ -38,7 +38,7 @@ class HistoricalKlineQuery(BaseModel):
 
 @router.post("/ShouldEnterPosition", tags=["signals"])
 async def should_enter_position(query: QueryEnter):
-    
+
     logger.info("ShouldEnterPosition")
     logger.debug(query)
 

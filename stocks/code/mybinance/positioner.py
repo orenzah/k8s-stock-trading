@@ -3,7 +3,6 @@ import inspect
 import logging
 import os
 import sys
-import time
 
 import requests
 from binance.spot import Spot
@@ -27,11 +26,12 @@ API_SECRET = os.getenv('BINANCE_API_SECRET')
 INTERVAL = os.getenv('INTERVAL')
 API_URL = os.getenv('API_URL')
 
+
 def map_symbol(symbol: str):
     match(symbol):
         case "BTCUSDT":
             return "BTC_USDT"
-            
+
 
 def sell_symbol(shares, symbol):
     pass
@@ -199,7 +199,7 @@ while True:
         }
         logger.info(f'Creating position: {data}')
         resp = requests.post(
-            f'{API_URL}/Positions/Create', json=data)   
+            f'{API_URL}/Positions/Create', json=data)
 
         if resp.status_code != 200:
             logger.error(f'Error: {resp.status_code}')

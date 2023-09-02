@@ -27,6 +27,11 @@ API_SECRET = os.getenv('BINANCE_API_SECRET')
 INTERVAL = os.getenv('INTERVAL')
 API_URL = os.getenv('API_URL')
 
+def map_symbol(symbol: str):
+    match(symbol):
+        case "BTCUSDT":
+            return "BTC_USDT"
+            
 
 def sell_symbol(shares, symbol):
     pass
@@ -83,7 +88,7 @@ def current_positions(client, active_positions):
                 f'http://api:8000/Positions/Close', json=data)
             if resp.status_code != 200:
                 logger.error(f'Error: {resp.status_code}')
-                time.sleep(10)
+                # time.sleep(10)
                 continue
             continue
 
@@ -115,13 +120,13 @@ while True:
         break
     except Exception as e:
         logger.error(f'Exception: {e}')
-        time.sleep(10)
+        # time.sleep(10)
 while True:
     # Get from API list of open positions
     resp = requests.get('http://api:8000/Positions/List')
     if resp.status_code != 200:
         logger.error(f'Error: {resp.status_code}')
-        time.sleep(10)
+        # time.sleep(10)
         continue
     positions = resp.json()
     logger.info(f'Positions: {positions}')
@@ -145,56 +150,61 @@ while True:
         signals = []
         for symbol in symbols:
             data = {
-                "symbol": symbol
+                "symbol": symbol.replace('_', '')
             }
             resp = requests.post(f'http://api:8000/Signals/ShouldEnterPosition', json=data)
+            logger.info(f'ShouldEnterPosition: {resp}')
             if resp.status_code != 200:
                 logger.error(f'Error: {resp.status_code}')
-                time.sleep(10)
+                # time.sleep(10)
                 continue
             signal = resp.json()
             if signal is None:
                 continue
-            signals.append(signal)
+            if signal['enter_position'] == "false":
+                logger.info(f'No signal to enter position for symbol {symbol}')
+                continue
+            if signal['enter_position'] == "true":
+                signal['symbol'] = symbol
+                signals.append(signal)
         if len(signals) == 0:
             logger.info('No signals to enter a new position')
-            time.sleep(10)
+            # time.sleep(10)
             continue
-        signals.sort(key=lambda x: x['confidence'])
+        # signals.sort(key=lambda x: x['confidence'])
         signal = signals[0]
         logger.info(f'Signal: {signal}')
-        if signal['should_enter_position']:
-            # call function to buy the symbol in Binance
-            shares = 0.1
-            # rslt = buy_symbol(shares, symbol) # TODO
-            # if not rslt:
-            #     logger.error(f'Error: {rslt}')
-            #     time.sleep(10)
-            #     continue
-            # send request to the API to create the position
-            klines = client.klines(symbol=symbol, interval="1m")
-            # Get the last kline
-            kline = klines[-1]
-            # Get the close price
-            entry_price = close_price = float(kline[4])
-            shares = 100 / entry_price
-            data = {
-                "entry_price": entry_price,
-                "exit_price": signal['exit_price'],
-                "shares": shares,
-                "symbol": symbol,
-                "timeout_seconds": signal['timeout_seconds'],
-                "stop_lose_price": signal['stop_lose_price']
-            }
-            resp = requests.post(
-                f'{API_URL}/Positions/Create', json=data)
 
-            if resp.status_code != 200:
-                logger.error(f'Error: {resp.status_code}')
-                time.sleep(10)
-                continue
-            logger.info(f'Created position: {resp.json()}')
-        else:
-            logger.info('No signal to enter position')
+        # call function to buy the symbol in Binance
+        shares = 0.1
+        # rslt = buy_symbol(shares, symbol) # TODO
+        # if not rslt:
+        #     logger.error(f'Error: {rslt}')
+        #     time.sleep(10)
+        #     continue
+        # send request to the API to create the position
+        klines = client.klines(symbol=symbol, interval="1m")
+        # Get the last kline
+        kline = klines[-1]
+        # Get the close price
+        entry_price = close_price = float(kline[4])
+        shares = 100 / entry_price
+        data = {
+            "entry_price": entry_price,
+            "exit_price": signal['take_profit'],
+            "shares": shares,
+            "symbol": map_symbol(symbol),
+            "timeout_seconds": signal['timeout_seconds'],
+            "stop_lose_price": signal['stop_loss']
+        }
+        logger.info(f'Creating position: {data}')
+        resp = requests.post(
+            f'{API_URL}/Positions/Create', json=data)   
 
-    time.sleep(10)
+        if resp.status_code != 200:
+            logger.error(f'Error: {resp.status_code}')
+            # time.sleep(10)
+            continue
+        logger.info(f'Created position: {resp.json()}')
+
+    # time.sleep(10)

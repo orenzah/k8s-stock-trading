@@ -9,3 +9,4 @@ uvicorn
 pydantic
 pandas
 PyYAML
+httpx

@@ -11,9 +11,9 @@ class Position(BaseModel):
     entry_datetime: str | None = None
     entry_price: float
     exit_price: float
-    shares: int
+    shares: float
     symbol: str
-    active: bool | None = None
+    active: int | None = None
     timeout_seconds: int
     stop_lose_price: float
 
@@ -100,16 +100,21 @@ def get_position_by_id(cnx, id):
 def insert_state(position):
     cnx = open_connection('positions')
     cursor = cnx.cursor()
+    if position.active is None:
+        position.active = 1
+    else:
+        position.active = 0
     query = ("INSERT INTO state "
-             "(entry_price, exit_price, shares, symbol, timeout_seconds, stop_lose_price)"
-             "VALUES (%s, %s, %s, %s, %s)")
+             "(entry_price, exit_price, shares, symbol, timeout_seconds, stop_lose_price, active)"
+             "VALUES (%s, %s, %s, %s, %s, %s, %s)")
     data = (
         position.entry_price,
         position.exit_price,
         position.shares,
         position.symbol,
         position.timeout_seconds,
-        position.stop_lose_price)
+        position.stop_lose_price,
+        position.active)
     cursor.execute(query, data)
     lastrowid = cursor.lastrowid
     cnx.commit()
@@ -154,12 +159,13 @@ async def get_id(id: int):
 @router.post("/Create", tags=["positions"])
 async def create_position(position: Position):
     # Create a new position
+    logger.warning(f"Create position: {position}")
     row_id = insert_state(position)
     position.id = row_id
     if position.active is None:
         position.active = True
-    logging.debug(row_id)
-    logging.debug(position)
+    logging.warning(row_id)
+    logging.warning(position)
     return {"id": row_id, "position": position}
 
 

@@ -25,6 +25,8 @@ spec:
             - "{{ . }}"
             {{- end }}
           env:
+          - name: API_URL
+            value: {{ .Values.api.url }}
           - name: MYSQL_HOST
             value: {{ .Values.mysql.hostname }}
           - name: MYSQL_USER

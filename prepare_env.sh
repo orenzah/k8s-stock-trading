@@ -1,4 +1,8 @@
 #!/bin/bash
+if (( $EUID == 0 )); then	
+	alias sudo=""
+fi
+
 sudo apt-get install update
 sudo apt-get install -y python3 python3-pip
 KUBECTL_PATH=/usr/local/bin/kubectl

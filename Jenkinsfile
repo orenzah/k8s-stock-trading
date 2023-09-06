@@ -5,6 +5,8 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Building.."
+                sh('ls -la')
+                sh('pwd')
                 sh('prepare.sh')            
             }
         }

@@ -26,7 +26,8 @@ pipeline {
             steps {
                 container('docker') {
                     echo "Cloning.."
-                    sh "git clone https://github.com/orenzah/k8s-stock-trading"                
+                    sh "git clone https://github.com/orenzah/k8s-stock-trading"    
+                }            
             }
         }
         stage('Test') {

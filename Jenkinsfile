@@ -7,7 +7,7 @@ pipeline {
                 echo "Building.."
                 sh('ls -la')
                 sh('pwd')
-                sh('prepare.sh')            
+                sh('sh prepare.sh')            
             }
         }
         stage('Test') {

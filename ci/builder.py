@@ -24,6 +24,10 @@ class Builder(CI):
             "--builder",
             help="Build images",
             action="store_true")
+        argparser.add_argument(
+            "--build-jenkins",
+            help="Build images",
+            action="store_true")
         self.argparser = argparser
 
     def docker_builder(self, target: str, image: str, tag: str, cwd: str):
@@ -37,7 +41,10 @@ class Builder(CI):
         run(["docker", "push", f"{registry}/{image}:{tag}"])
 
     def main(self):
+        if self.args.build_jenkins:
+            self.docker_builder("jenkins", "jenkins", "latest", "./jenkins")            
         if self.args.base:
             self.docker_builder("base", "python-base", "latest", "./stocks")
         if self.args.builder:
             self.docker_builder("app", "python-app", "latest", "./stocks")
+

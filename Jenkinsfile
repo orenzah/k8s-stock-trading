@@ -5,8 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Building.."
-                prepare.sh
-                main.sh --builder --base
+                prepare.sh                
             }
         }
         stage('Test') {

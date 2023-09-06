@@ -8,7 +8,7 @@ pipeline {
                 sh('ls -la')
                 sh('pwd')
                 sh('''#!/bin/bash
-                ./prepare_env.sh
+                ./jenkins.sh
                 ./main.sh --builder
                 ''')            
             }

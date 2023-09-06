@@ -5,7 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Building.."
-                bash -c "main.sh --builder --base"
+                sh "bash -c 'main.sh --builder --base'"
             }
         }
         stage('Test') {
@@ -16,7 +16,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
-                bash -c "main.sh --deployer"
+                sh "bash -c 'main.sh --deployer'"
             }
         }
     }

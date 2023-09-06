@@ -5,6 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Building.."
+                sh "ls -la"
                 sh "bash -c 'main.sh --builder --base'"
             }
         }

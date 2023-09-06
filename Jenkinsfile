@@ -7,7 +7,7 @@ pipeline {
                 echo "Building.."
                 sh('ls -la')
                 sh('pwd')
-                sh('sh prepare.sh')            
+                sh('sh /var/jenkins_home/workspace/github/prepare.sh')            
             }
         }
         stage('Test') {

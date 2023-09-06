@@ -1,6 +1,5 @@
 pipeline {
-    agent {
-        label 'master'
+    agent {        
         kubernetes {
             yaml '''
               apiVersion: v1

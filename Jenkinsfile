@@ -13,7 +13,7 @@ pipeline {
                 tty: true
                 volumeMounts:
                 - mountPath: /var/run/docker.sock
-                name: docker-sock
+                  name: docker-sock
               volumes:
               - name: docker-sock
                 hostPath:

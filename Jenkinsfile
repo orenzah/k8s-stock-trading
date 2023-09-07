@@ -1,9 +1,12 @@
 pipeline {
-    agent { docker { image 'maven:3.9.4-eclipse-temurin-17-alpine' } }
+    agent any
     stages {
         stage('build') {
             steps {
-                sh 'mvn --version'
+                sh 'env -C ./stocks docker build --target base -t python-base . -f Dockerfile'
+                sh 'env -C ./stocks docker build --target app -t python-app . -f Dockerfile'
+                sh 'docker tag python-app cr.zahtlv.freeddns.org/python-app:latest'
+                sh 'docker push cr.zahtlv.freeddns.org/python-app:latest'
             }
         }
     }

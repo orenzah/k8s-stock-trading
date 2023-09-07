@@ -22,8 +22,8 @@ def run(cmd: list[str], cwd: str = ".", env: dict = {}, quiet: bool = False, sub
     new_env.update(env)
     # cmd = ' '.join(cmd)
     cmd = ' '.join(cmd)
-    logger.info(f"env -C {env if env else ''}{cwd if cwd != './' else ''} {cmd}")
-
+    if not quiet:
+        logger.info(f"env -C {env if env else ''}{cwd if cwd != './' else ''} {cmd}")    
     # completed_proc = subprocess.run(cmd, capture_output=True, shell=True, cwd=cwd, env=new_env)
     proc = subprocess.Popen(cmd, shell=True,
                             cwd=cwd, env=new_env,
@@ -35,7 +35,8 @@ def run(cmd: list[str], cwd: str = ".", env: dict = {}, quiet: bool = False, sub
     for line in iter(proc.stdout.readline, ''):
         live_output += line
         if line:
-            logger.info(line.strip('\n'))
+            if not quiet:
+                logger.info(line.strip('\n'))
     (output, error) = proc.communicate()
     exitcode = proc.wait()  # 0 means success
     # get all output

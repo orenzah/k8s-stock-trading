@@ -47,7 +47,7 @@ class Builder(CI):
 
     def main(self):
         if self.args.build_jenkins:
-            self.docker_builder("jenkins", "jenkins", "latest", "./jenkins")            
+            self.docker_builder("jenkins", "jenkins", "latest", ".", "./jenkins/Dockerfile")            
         if self.args.base:
             self.docker_builder("base", "python-base", "latest", "./stocks")
         if self.args.builder:

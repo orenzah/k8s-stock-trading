@@ -5,7 +5,7 @@ pipeline {
             steps {                
                 echo "Building..."
                 sh "bash -c 'uname -a && cat /etc/issue'"                
-                sh "bash -c 'sudo apt-get update && sudo apt-get install -y curl git'"
+                sh "bash -c 'sudo docker run -it --rm hello-world'"
             }
         }
         stage('Test') {

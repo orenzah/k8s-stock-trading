@@ -1,23 +1,60 @@
 pipeline {
-    agent any
-    stages {
-        stage('Build') {
-            steps {                
-                echo "Building..."
-                sh "bash -c 'uname -a && cat /etc/issue'"    
-                sh "bash -c 'sudo docker run --rm -v /var/run:/var/run -v $PWD:/code docker build --target ci -t python-ci /code -f /code/ci/Dockerfile'"                                            
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing..'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
-                sh "bash -c 'main.sh --deployer'"
-            }
-        }
+  agent {
+    kubernetes {
+      label 'dind'
+      defaultContainer 'docker'
+      yaml """
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: jenkins
+spec:
+  containers:
+    - name: docker
+      image: docker:latest
+      command:
+        - /bin/cat
+      tty: true
+      volumeMounts:
+        - name: dind-certs
+          mountPath: /certs
+      env:
+        - name: DOCKER_TLS_CERTDIR
+          value: /certs
+        - name: DOCKER_CERT_PATH
+          value: /certs
+        - name: DOCKER_TLS_VERIFY
+          value: 1
+        - name: DOCKER_HOST
+          value: tcp://localhost:2376
+    - name: dind
+      image: docker:dind
+      securityContext:
+        privileged: true
+      env:
+        - name: DOCKER_TLS_CERTDIR
+          value: /certs
+      volumeMounts:
+        - name: dind-storage
+          mountPath: /var/lib/docker
+        - name: dind-certs
+          mountPath: /certs
+  volumes:
+    - name: dind-storage
+      emptyDir: {}
+    - name: dind-certs
+      emptyDir: {}
+"""
     }
+  }
+  stages {
+    stage('Run Docker Things') {
+      steps {
+        sh 'printenv'
+        sh 'docker info'
+      }
+    }
+  }
 }

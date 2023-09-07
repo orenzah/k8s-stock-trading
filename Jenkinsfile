@@ -1,16 +1,10 @@
 pipeline {
-  agent {
-    kubernetes {
-      label 'dind'            
-    }
-  }
-  stages {    
-    stage('Run Docker Things') {
-      steps {
-        container('dind') {
-          sh 'docker ps'
+    agent { docker { image 'maven:3.9.4-eclipse-temurin-17-alpine' } }
+    stages {
+        stage('build') {
+            steps {
+                sh 'mvn --version'
+            }
         }
-      }
     }
-  }
 }

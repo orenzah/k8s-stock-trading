@@ -2,6 +2,7 @@ pipeline {
   agent {
     kubernetes {
       label 'dind'            
+    }
   }
   stages {    
     stage('Run Docker Things') {

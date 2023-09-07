@@ -11,7 +11,7 @@ pipeline {
         }
         stage('deploy') {
             steps {
-                sh './main.py --deployer --ci-mode'
+                sh 'python3 main.py --deployer --ci-mode'
             }
         }
     }

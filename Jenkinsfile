@@ -6,9 +6,6 @@ pipeline {
   }
   stages {    
     stage('Run Docker Things') {
-        agent {
-
-        }
       steps {
         container('dind') {
           sh 'docker ps'

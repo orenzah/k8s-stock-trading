@@ -10,8 +10,7 @@ pipeline {
             }            
         }
         stage('deploy') {
-            steps {
-                sh 'python3 -m pip install pyyaml'
+            steps {                
                 sh 'python3 main.py --deployer --ci-mode'
             }
         }

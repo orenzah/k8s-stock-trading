@@ -2,15 +2,10 @@ pipeline {
     agent any
     stages {
         stage('Build') {
-            agent {
-                docker {
-                    image 'ubuntu'
-                    args '-v /var/run:/var/run'
-                }
-            }
             steps {                
                 echo "Building..."
                 sh "bash -c 'uname -a && cat /etc/issue'"                
+                sh "bash -c 'sudo apt-get update && sudo apt-get install -y curl git'"
             }
         }
         stage('Test') {

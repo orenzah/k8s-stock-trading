@@ -1,7 +1,7 @@
 pipeline {
   agent {
     kubernetes {
-      label 'dind'
+      label 'kubernetes'
       defaultContainer 'docker'
       yaml """
 ---

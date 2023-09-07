@@ -4,7 +4,7 @@ USER root
 ADD ./ci/requirements.txt /ci/requirements.txt
 RUN apt-get update && \
     apt-get install -y \
-    apt-transport-https ca-certificates curl gnupg2 software-properties-common sudo python3 python3-pip \
+    apt-transport-https ca-certificates curl gnupg2 software-properties-common sudo \
     && curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - \
     && apt-key fingerprint 0EBFCD88 \
     && add-apt-repository \
@@ -20,10 +20,16 @@ RUN apt-get update && \
     && curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 \
     && chmod 700 get_helm.sh \
     && ./get_helm.sh \
-    && rm get_helm.sh \
-    && pip install --upgrade pip && pip install -r /ci/requirements.txt && \
+    && rm get_helm.sh 
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip python3.11-venv && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+RUN python3 -m venv .venv && \
+    . .venv/bin/activate && \
+    python3 -m pip install --upgrade pip && python3 -m pip install -r /ci/requirements.txt && \
     rm -rf /root/.cache/pip && \
-    rm -rf /ci/requirements.txt    
+    rm -rf /ci/requirements.txt
 
 RUN echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
     && usermod -a -G docker jenkins

@@ -1,38 +1,16 @@
 pipeline {
-    agent {        
-        kubernetes {
-            yaml '''
-              apiVersion: v1
-              kind: Pod
-              spec:
-                containers:
-                - name: docker
-                  image: docker:latest
-                  command:
-                  - cat
-                  tty: true
-                  volumeMounts:
-                  - mountPath: /var/run/docker.sock
-                    name: docker-sock
-                  volumes:
-                  - name: docker-sock
-                    hostPath:
-                      path: /var/run/docker.sock   
-                '''
-        }
-    }
+    agent any
     stages {
         stage('Build') {
-            steps {
-                
-                echo "Building.."
-                sh('ls -la')
-                sh('pwd')
-                sh('docker run -it --rm hello-world')
-                sh('''#!/bin/bash
-                ./jenkins.sh
-                ./main.sh --builder
-                ''')            
+            agent {
+                docker {
+                    image 'ubuntu'
+                    args '-v /var/run:/var/run'
+                }
+            }
+            steps {                
+                echo "Building..."
+                sh "bash -c 'uname -a && cat /etc/issue'"                
             }
         }
         stage('Test') {

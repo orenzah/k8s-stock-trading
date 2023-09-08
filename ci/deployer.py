@@ -38,13 +38,15 @@ class Deployer(CI):
 
     def get_context(self):
         with open(f"{CI_ROOT}/env/stocks.yaml", 'r') as f:
-            context = yaml.load(f, Loader=yaml.FullLoader)
-        if not self.args.ci_mode:
-            self.context = context["context"]
+            context = yaml.load(f, Loader=yaml.FullLoader)        
+        self.context = context["context"]
         self.namespace = context["namespace"]
 
     def helm_cmd(self, cmd: list[str], name: str, chart: str, values: dict, namespace: str):
-        cmd = ["helm", "--kube-context", self.context] + cmd + ["--namespace", namespace, name, chart]
+        if not self.args.ci_mode:
+            cmd = ["helm", "--kube-context", self.context] + cmd + ["--namespace", namespace, name, chart]
+        else:
+            cmd = ["helm"] + cmd + ["--namespace", namespace, name, chart]
         for v in values.keys():
             cmd.append(f"--set {v}={values[v]}")
         return cmd

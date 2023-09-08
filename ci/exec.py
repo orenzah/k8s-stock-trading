@@ -20,10 +20,8 @@ def censor(cmd: str):
     ret_cmd = []
     split_cmd = cmd.split(' ')    
     for word in split_cmd:
-        word = word.strip()
-        if '=' in word:
-            ret_cmd += [f'****=*****']
-        elif not word in allowed_print:
+        word = word.strip()        
+        if not word in allowed_print:
             word = '*****'
         ret_cmd += [word]
     ret_cmd = ' '.join(ret_cmd)    

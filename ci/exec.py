@@ -12,12 +12,19 @@ class RunOutput():
     def __repr__(self):
         return f"Output: {self.output}\nError: {self.error}"
 
-def censor(cmd: str):
-    allowed_print = ['helm', 'kubectl', '--namespace', 'jenkins', 'stock', '--install', 'upgrade']
-    for word in cmd:
+def censor(cmd: str):    
+    allowed_print = ['helm', 'kubectl', 
+                     '--namespace', 'jenkins', 'stock', 
+                     '--install', 'upgrade', 'get', 'secret', '-f', '--set', 
+                     'ci-config', '-o', 'json']
+    ret_cmd = []
+    for word in cmd.split(' '):
+        word = word.strip()
         if not word in allowed_print:
             word = '*****'
-    return cmd
+        ret_cmd += [word]
+    ret_cmd = ' '.join(ret_cmd)    
+    return ret_cmd
         
 def run(cmd: list[str], cwd: str = ".", env: dict = {}, quiet: bool = False, submodule_name: str = None):
     if submodule_name:
@@ -32,7 +39,7 @@ def run(cmd: list[str], cwd: str = ".", env: dict = {}, quiet: bool = False, sub
         logger.info(f"env -C {env if env else ''}{cwd if cwd != './' else ''} {cmd}")    
     else:
         censored_cmd = censor(cmd)
-        logger.info(f"env -C {env if env else ''}{cwd if cwd != './' else ''} {censored_cmd}")
+        logger.info(f"env -C {env if env else ''}{cwd if cwd != './' else ''} {censored_cmd}")    
     # completed_proc = subprocess.run(cmd, capture_output=True, shell=True, cwd=cwd, env=new_env)
     proc = subprocess.Popen(cmd, shell=True,
                             cwd=cwd, env=new_env,

@@ -18,9 +18,12 @@ def censor(cmd: str):
                      '--install', 'upgrade', 'get', 'secret', '-f', '--set', 
                      'ci-config', '-o', 'json']
     ret_cmd = []
-    for word in cmd.split(' '):
+    split_cmd = cmd.split(' ')    
+    for word in split_cmd:
         word = word.strip()
-        if not word in allowed_print:
+        if '=' in word:
+            ret_cmt += [word.split('=')[0] + '=' + '*****']            
+        elif not word in allowed_print:
             word = '*****'
         ret_cmd += [word]
     ret_cmd = ' '.join(ret_cmd)    

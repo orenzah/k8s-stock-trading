@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                sh '. /.venv/bin/activate && python3 main.py --builder'                
+                sh '. /.venv/bin/activate && python3 main.py --builder'              
             }            
         }
         stage('deploy') {

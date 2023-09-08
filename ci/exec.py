@@ -4,7 +4,7 @@ import subprocess
 from ci.logger import mylogger
 
 
-class RunOutput():
+class RunOutput:
     def __init__(self, output: str, error: str):
         self.output = output
         self.error = error
@@ -12,26 +12,47 @@ class RunOutput():
     def __repr__(self):
         return f"Output: {self.output}\nError: {self.error}"
 
-def censor(cmd: str):    
-    allowed_print = ['helm', 'kubectl', 
-                     '--namespace', 'jenkins', 'stock', 
-                     '--install', 'upgrade', 'get', 'secret', '-f', '--set', 
-                     'ci-config', '-o', 'json']
+
+def censor(cmd: str):
+    allowed_print = [
+        "helm",
+        "kubectl",
+        "--namespace",
+        "jenkins",
+        "stock",
+        "--install",
+        "upgrade",
+        "get",
+        "secret",
+        "-f",
+        "--set",
+        "ci-config",
+        "-o",
+        "json",
+    ]
     ret_cmd = []
-    split_cmd = cmd.split(' ')    
+    split_cmd = cmd.split(" ")
     for word in split_cmd:
-        word = word.strip()        
+        word = word.strip()
         if not word in allowed_print:
             length = len(word)
             if length > 10:
-                word = f'{word[0:3]}*****'
+                word = f"{word[0:3]}*****"
             else:
-                word = f'{word[0]}*****'
+                word = f"{word[0]}*****"
         ret_cmd += [word]
-    ret_cmd = ' '.join(ret_cmd)    
+    ret_cmd = " ".join(ret_cmd)
     return ret_cmd
-        
-def run(cmd: list[str], cwd: str = ".", env: dict = {}, quiet: bool = False, submodule_name: str = None):
+
+
+def run(
+    cmd: list[str],
+    cwd: str = ".",
+    env: dict = {},
+    quiet: bool = False,
+    submodule_name: str = None,
+    censor: bool = False,
+):
     if submodule_name:
         logger = mylogger.getLogger(__name__ + "." + submodule_name)
     else:
@@ -39,29 +60,35 @@ def run(cmd: list[str], cwd: str = ".", env: dict = {}, quiet: bool = False, sub
     new_env = os.environ.copy()
     new_env.update(env)
     # cmd = ' '.join(cmd)
-    cmd = ' '.join(cmd)
-    if not quiet:
-        logger.info(f"env -C {env if env else ''}{cwd if cwd != './' else ''} {cmd}")    
+    cmd = " ".join(cmd)
+    if not censor:
+        logger.info(f"env -C {env if env else ''}{cwd if cwd != './' else ''} {cmd}")
     else:
         censored_cmd = censor(cmd)
-        logger.info(f"env -C {env if env else ''}{cwd if cwd != './' else ''} {censored_cmd}")    
+        logger.info(
+            f"env -C {env if env else ''}{cwd if cwd != './' else ''} {censored_cmd}"
+        )
     # completed_proc = subprocess.run(cmd, capture_output=True, shell=True, cwd=cwd, env=new_env)
-    proc = subprocess.Popen(cmd, shell=True,
-                            cwd=cwd, env=new_env,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT,
-                            universal_newlines=True,
-                            bufsize=1)
+    proc = subprocess.Popen(
+        cmd,
+        shell=True,
+        cwd=cwd,
+        env=new_env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        universal_newlines=True,
+        bufsize=1,
+    )
     live_output = ""
-    for line in iter(proc.stdout.readline, ''):
+    for line in iter(proc.stdout.readline, ""):
         live_output += line
         if line:
-            if 'error' in line.lower():
-                logger.error(line.strip('\n'))
+            if "error" in line.lower():
+                logger.error(line.strip("\n"))
             elif not quiet:
-                logger.info(line.strip('\n'))
+                logger.info(line.strip("\n"))
     (output, error) = proc.communicate()
-    if error:        
+    if error:
         logger.error(error)
     exitcode = proc.wait()  # 0 means success
     # get all output

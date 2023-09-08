@@ -16,42 +16,42 @@ class Builder(CI):
         self.args = args
 
     def add_args(self, argparser: argparse.ArgumentParser):
+        argparser.add_argument("--base", help="Build base images", action="store_true")
+        argparser.add_argument("--builder", help="Build images", action="store_true")
         argparser.add_argument(
-            "--base",
-            help="Build base images",
-            action="store_true")
-        argparser.add_argument(
-            "--builder",
-            help="Build images",
-            action="store_true")
-        argparser.add_argument(
-            "--build-jenkins",
-            help="Build images",
-            action="store_true")
-        argparser.add_argument(
-            "--ci-builder",
-            help="Build images",
-            action="store_true")
+            "--build-jenkins", help="Build images", action="store_true"
+        )
+        argparser.add_argument("--ci-builder", help="Build images", action="store_true")
         self.argparser = argparser
 
-    def docker_builder(self, target: str, image: str, tag: str, cwd: str, dockerfile: str = "Dockerfile"):
+    def docker_builder(
+        self,
+        target: str,
+        image: str,
+        tag: str,
+        cwd: str,
+        dockerfile: str = "Dockerfile",
+    ):
         if os.environ.get("DOCKER_BUILDKIT") is None:
             os.environ["DOCKER_BUILDKIT"] = "1"
         if os.environ.get("REGISTRY") is None:
             os.environ["REGISTRY"] = "cr.zahtlv.freeddns.org"
-        registry = os.environ["REGISTRY"]        
-        run(["docker", "build", "--target", target, "-t", image, ".", '-f', dockerfile], cwd=cwd)
+        registry = os.environ["REGISTRY"]
+        run(
+            ["docker", "build", "--target", target, "-t", image, ".", "-f", dockerfile],
+            cwd=cwd,
+        )
         run(["docker", "tag", image, f"{registry}/{image}:{tag}"])
         run(["docker", "push", f"{registry}/{image}:{tag}"])
-        
 
     def main(self):
         if self.args.build_jenkins:
-            self.docker_builder("jenkins", "jenkins", "latest", ".", "./jenkins/Dockerfile")            
+            self.docker_builder(
+                "jenkins", "jenkins", "latest", ".", "./jenkins/Dockerfile"
+            )
         if self.args.base:
             self.docker_builder("base", "python-base", "latest", "./stocks")
         if self.args.builder:
             self.docker_builder("app", "python-app", "latest", "./stocks")
         if self.args.ci_builder:
             self.docker_builder("ci", "python-ci", "latest", ".", "./ci/Dockerfile")
-

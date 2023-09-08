@@ -12,7 +12,13 @@ class RunOutput():
     def __repr__(self):
         return f"Output: {self.output}\nError: {self.error}"
 
-
+def censor(cmd: str):
+    allowed_print = ['helm', 'kubectl', '--namespace', 'jenkins', 'stock', '--install', 'upgrade']
+    for word in cmd:
+        if not word in allowed_print:
+            word = '*****'
+    return cmd
+        
 def run(cmd: list[str], cwd: str = ".", env: dict = {}, quiet: bool = False, submodule_name: str = None):
     if submodule_name:
         logger = mylogger.getLogger(__name__ + "." + submodule_name)
@@ -24,6 +30,9 @@ def run(cmd: list[str], cwd: str = ".", env: dict = {}, quiet: bool = False, sub
     cmd = ' '.join(cmd)
     if not quiet:
         logger.info(f"env -C {env if env else ''}{cwd if cwd != './' else ''} {cmd}")    
+    else:
+        censored_cmd = censor(cmd)
+        logger.info(f"env -C {env if env else ''}{cwd if cwd != './' else ''} {censored_cmd}")
     # completed_proc = subprocess.run(cmd, capture_output=True, shell=True, cwd=cwd, env=new_env)
     proc = subprocess.Popen(cmd, shell=True,
                             cwd=cwd, env=new_env,

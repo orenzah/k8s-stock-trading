@@ -22,7 +22,7 @@ def censor(cmd: str):
     for word in split_cmd:
         word = word.strip()        
         if not word in allowed_print:
-            word = '*****'
+            word = f'{word[0]}*****'
         ret_cmd += [word]
     ret_cmd = ' '.join(ret_cmd)    
     return ret_cmd

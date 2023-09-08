@@ -1,0 +1,25 @@
+persistence:
+  storageClass: nfs-client
+controller:
+  agentListenerNodePort: 30555
+  agentListenerServiceType: NodePort
+  serviceType: NodePort
+  nodePort: 30558
+  numExecutors: 1
+  additionalPlugins:
+  - docker-plugin:1.5
+  image: cr.zahtlv.freeddns.org/jenkins
+  tag: latest
+  containerSecurityContext:
+    privileged: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    readOnlyRootFilesystem: false
+    allowPrivilegeEscalation: true
+rbac:
+  readSecrets: true
+agent:
+  volumes:
+  - type: HostPath
+    hostPath: /var/run/containerd
+    mountPath: /var/run/containerd

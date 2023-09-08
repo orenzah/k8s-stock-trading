@@ -55,7 +55,10 @@ def run(cmd: list[str], cwd: str = ".", env: dict = {}, quiet: bool = False, sub
     live_output = ""
     for line in iter(proc.stdout.readline, ''):
         live_output += line
-        if line:            
+        if line:
+            if 'error' in line.lower():
+                logger.error(line.strip('\n'))
+            elif not quiet:
                 logger.info(line.strip('\n'))
     (output, error) = proc.communicate()
     if error:        

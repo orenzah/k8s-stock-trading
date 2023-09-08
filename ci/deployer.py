@@ -39,7 +39,8 @@ class Deployer(CI):
     def get_context(self):
         with open(f"{CI_ROOT}/env/stocks.yaml", 'r') as f:
             context = yaml.load(f, Loader=yaml.FullLoader)
-        self.context = context["context"]
+        if not self.args.ci_mode:
+            self.context = context["context"]
         self.namespace = context["namespace"]
 
     def helm_cmd(self, cmd: list[str], name: str, chart: str, values: dict, namespace: str):

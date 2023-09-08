@@ -57,6 +57,8 @@ def run(cmd: list[str], cwd: str = ".", env: dict = {}, quiet: bool = False, sub
             if not quiet:
                 logger.info(line.strip('\n'))
     (output, error) = proc.communicate()
+    if error:        
+        logger.error(error)
     exitcode = proc.wait()  # 0 means success
     # get all output
 

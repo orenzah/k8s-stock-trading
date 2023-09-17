@@ -10,3 +10,7 @@ pydantic
 pandas
 PyYAML
 httpx
+backtrader[plotting]
+matplotlib
+tk-tools
+scipy

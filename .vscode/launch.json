@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [        
+        {
+            "name": "Python: backtest main.py --signals",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/stocks/code/backtest/main.py",
+            "justMyCode": true,
+            "args": ["--signals"]
+        }
+
+    ]
+}

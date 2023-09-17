@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: influxdb-api  
+data:
+    host: "influxdb"
+    port: "8086"
+    bucket: "binance"
+    org: "stockdata"

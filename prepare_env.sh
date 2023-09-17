@@ -1,6 +1,6 @@
 #!/bin/bash
 sudo apt-get install update
-sudo apt-get install -y python3 python3-pip
+sudo apt-get install -y python3 python3-pip python3-tk
 KUBECTL_PATH=/usr/local/bin/kubectl
 if [ -f $KUEBCTL_PATH ]; then
 	echo "kubectl exists in $KUEBCTL_PATH"

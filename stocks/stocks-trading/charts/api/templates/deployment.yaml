@@ -39,6 +39,8 @@ spec:
               secretKeyRef:
                 name: {{ .Values.mysql.password_secret.name }}
                 key: {{ .Values.mysql.password_secret.password }}
+          - name: MYSQL_DATABASE
+            value: "positions"
           - name: BINANCE_API_KEY
             valueFrom:
               secretKeyRef:
@@ -49,6 +51,31 @@ spec:
               secretKeyRef:
                 name: binance
                 key: api_secret
+          - name: INFLUX_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: influxdb-api
+                key: host
+          - name: INFLUX_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: influxdb-api
+                key: port
+          - name: INFLUXDB_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: influxdb-api
+                key: token
+          - name: INFLUX_BUCKET_BINANCE
+            valueFrom:
+              configMapKeyRef:
+                name: influxdb-api
+                key: bucket
+          - name: INFLUX_ORG
+            valueFrom:
+              configMapKeyRef:
+                name: influxdb-api
+                key: org
 
 
           
